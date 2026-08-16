@@ -215,9 +215,6 @@ def main():
     context_window = data.get("context_window") or {}
     used_context = context_window.get("used_percentage")
     context_size = context_window.get("context_window_size")
-    session_tokens = (context_window.get("total_input_tokens") or 0) + (
-        context_window.get("total_output_tokens") or 0
-    )
 
     # Get rate limits.
     rate_limits = data.get("rate_limits") or {}
@@ -329,15 +326,15 @@ def main():
         if seven_resets_str:
             line2 += f"{seven_color} (⏱ {seven_resets_str}){RESET}"
 
-    if tok_has_val(session_tokens) or tok_has_val(daily_tokens) or tok_has_val(monthly_tokens):
+    if tok_has_val(daily_tokens):
         if line2:
             line2 += SEP
-        tok_str = f"{WHITE}{format_tokens(session_tokens)}{RESET}"
-        if tok_has_val(daily_tokens) or tok_has_val(monthly_tokens):
-            d_str = format_tokens(daily_tokens or 0)
-            mo_str = format_tokens(monthly_tokens or 0)
-            tok_str += f"{WHITE} ({d_str}/d, {mo_str}/mo){RESET}"
-        line2 += tok_str
+        line2 += f"{WHITE}{format_tokens(daily_tokens)}/d{RESET}"
+
+    if tok_has_val(monthly_tokens):
+        if line2:
+            line2 += SEP
+        line2 += f"{WHITE}{format_tokens(monthly_tokens)}/mo{RESET}"
 
     # Print the status line: always show line 1, show line 2 only if it has content
     if line2:
