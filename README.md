@@ -23,10 +23,10 @@ My personal statusline script for Claude Code.
 
 ## How it works
 1. Claude Code feeds session information as a JSON into the statusline script.
-2. `statusline.py` parses the input JSON.
-3. `statusline.py` checks the daily/monthly usage if `ccusage` is installed in the system.
-4. `statusline.py` checks the git status if the current workspace is git repository.
-5. `statusline.py` prints a statusline.
+2. Parses the input JSON.
+3. Checks the daily/monthly usage if `ccusage` is installed in the system.
+4. Checks the git status if the current workspace is git repository.
+5. Prints a statusline.
 
 ## Installation
 ### Manual
