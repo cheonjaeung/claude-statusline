@@ -1,4 +1,7 @@
 # Claude Code Statusline
+![demo_light](demo_light.png)
+![demo_night](demo_night.png)
+
 My personal statusline script for Claude Code.
 
 ## What it shows
