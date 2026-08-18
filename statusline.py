@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import date
 
@@ -22,7 +23,7 @@ GOLD = "\x1b[38;5;136m"
 
 SEP = f"{GRAY} | {RESET}"
 
-CCUSAGE_CACHE_FILE = "/tmp/claude_statusline_ccusage_cache"
+CCUSAGE_CACHE_FILE = os.path.join(tempfile.gettempdir(), "claude_statusline_ccusage_cache")
 CCUSAGE_CACHE_TTL = 10  # seconds
 
 
