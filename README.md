@@ -53,5 +53,6 @@ My personal statusline script for Claude Code.
      }
    }
    ```
+   > On WSL (Windows Subsystem for Linux), follow the macOS or Linux guide.
 
 3. Start a new Claude Code session or restart the current one.
