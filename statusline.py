@@ -25,6 +25,7 @@ SEP = f"{GRAY} | {RESET}"
 CCUSAGE_CACHE_FILE = "/tmp/claude_statusline_ccusage_cache"
 CCUSAGE_CACHE_TTL = 10  # seconds
 
+
 def scale_num(n):
     """Split a number into (value, unit), e.g. 1500 -> (1.5, 'K')."""
     n = float(n)
@@ -196,6 +197,9 @@ def get_ccusage_tokens():
 
 
 def main():
+    # Force stdout encoding to UTF-8.
+    sys.stdout.reconfigure(encoding="utf-8")
+
     # JSON payload that fed by Claude Code.
     # Schema Reference: https://code.claude.com/docs/en/statusline
     data = json.load(sys.stdin)
