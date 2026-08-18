@@ -30,15 +30,26 @@ My personal statusline script for Claude Code.
 
 ## Installation
 ### Manual
-1. Copy `statusline.py` to `~/.claude/statusline.py`.
+1. Copy `statusline.py` to `~/.claude/statusline.py` (on Windows, i.e. `%USERPROFILE%\.claude\statusline.py`).
 
 2. Set command following settings to `~/.claude/settings.json`:
 
+   **macOS or Linux:**
    ```json
    {
      "statusLine": {
        "type": "command",
        "command": "python3 ~/.claude/statusline.py"
+     }
+   }
+   ```
+   **Windows:**
+   On Windows, use `python` instead of `python3`.
+   ```json
+   {
+     "statusLine": {
+       "type": "command",
+       "command": "python ~/.claude/statusline.py"
      }
    }
    ```
