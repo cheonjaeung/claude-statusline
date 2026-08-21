@@ -25,8 +25,15 @@ FIXED_MONTH = FIXED_TODAY[:7]
 HOME = os.path.expanduser("~")
 
 
-def run_statusline(payload, *, git_stdout=None, ccusage_available=False,
-                    daily_data=None, monthly_data=None, columns=None):
+def run_statusline(
+    payload,
+    *,
+    git_stdout=None,
+    ccusage_available=False,
+    daily_data=None,
+    monthly_data=None,
+    columns=None,
+):
     """Run statusline.main() end-to-end for a JSON payload, with the git
     and ccusage subprocess calls mocked out. Returns captured stdout."""
 
@@ -36,9 +43,13 @@ def run_statusline(payload, *, git_stdout=None, ccusage_available=False,
                 return subprocess.CompletedProcess(cmd, 1, stdout="", stderr="")
             return subprocess.CompletedProcess(cmd, 0, stdout=git_stdout, stderr="")
         if cmd[0] == "ccusage" and cmd[2] == "daily":
-            return subprocess.CompletedProcess(cmd, 0, stdout=json.dumps(daily_data or {"daily": []}), stderr="")
+            return subprocess.CompletedProcess(
+                cmd, 0, stdout=json.dumps(daily_data or {"daily": []}), stderr=""
+            )
         if cmd[0] == "ccusage" and cmd[2] == "monthly":
-            return subprocess.CompletedProcess(cmd, 0, stdout=json.dumps(monthly_data or {"monthly": []}), stderr="")
+            return subprocess.CompletedProcess(
+                cmd, 0, stdout=json.dumps(monthly_data or {"monthly": []}), stderr=""
+            )
         raise AssertionError(f"unexpected subprocess call: {cmd}")
 
     env = dict(os.environ)
@@ -48,16 +59,24 @@ def run_statusline(payload, *, git_stdout=None, ccusage_available=False,
 
     stdin = io.StringIO(json.dumps(payload))
     stdout = io.StringIO()
+    # Unlike real stdout, StringIO has no reconfigure(), which main() calls
+    # unconditionally, so stub it out.
+    stdout.reconfigure = lambda **kwargs: None
 
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        with patch.object(sys, "stdin", stdin), \
-             patch("statusline.subprocess.run", side_effect=fake_run), \
-             patch("statusline.shutil.which", return_value="/usr/local/bin/ccusage" if ccusage_available else None), \
-             patch("statusline.CCUSAGE_CACHE_FILE", os.path.join(tmp_dir, "ccusage_cache")), \
-             patch("statusline.time.time", return_value=FIXED_NOW), \
-             patch.dict(os.environ, env, clear=True):
-            with redirect_stdout(stdout):
-                statusline.main()
+    with (
+        tempfile.TemporaryDirectory() as tmp_dir,
+        patch.object(sys, "stdin", stdin),
+        patch("statusline.subprocess.run", side_effect=fake_run),
+        patch(
+            "statusline.shutil.which",
+            return_value="/usr/local/bin/ccusage" if ccusage_available else None,
+        ),
+        patch("statusline.CCUSAGE_CACHE_FILE", os.path.join(tmp_dir, "ccusage_cache")),
+        patch("statusline.time.time", return_value=FIXED_NOW),
+        patch.dict(os.environ, env, clear=True),
+        redirect_stdout(stdout),
+    ):
+        statusline.main()
 
     return stdout.getvalue()
 
@@ -154,11 +173,16 @@ class StatuslineIntegrationTest(unittest.TestCase):
         self.assertEqual(output, expected)
 
     def test_detached_head_has_no_branch_shown(self):
-        output = run_statusline({"workspace": {"current_dir": HOME}}, git_stdout="## HEAD (no branch)\n")
+        output = run_statusline(
+            {"workspace": {"current_dir": HOME}}, git_stdout="## HEAD (no branch)\n"
+        )
         self.assertEqual(output, f"{statusline.BLUE}~{statusline.RESET}")
 
     def test_fresh_repo_with_no_commits(self):
-        output = run_statusline({"workspace": {"current_dir": "/tmp"}}, git_stdout="## No commits yet on main\n")
+        output = run_statusline(
+            {"workspace": {"current_dir": "/tmp"}},
+            git_stdout="## No commits yet on main\n",
+        )
         expected = f"{statusline.BLUE}/tmp{statusline.RESET}{statusline.GRAY} main{statusline.RESET}"
         self.assertEqual(output, expected)
 

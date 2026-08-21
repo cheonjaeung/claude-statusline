@@ -23,7 +23,9 @@ GOLD = "\x1b[38;5;136m"
 
 SEP = f"{GRAY} | {RESET}"
 
-CCUSAGE_CACHE_FILE = os.path.join(tempfile.gettempdir(), "claude_statusline_ccusage_cache")
+CCUSAGE_CACHE_FILE = os.path.join(
+    tempfile.gettempdir(), "claude_statusline_ccusage_cache"
+)
 CCUSAGE_CACHE_TTL = 10  # seconds
 
 
@@ -178,11 +180,19 @@ def get_ccusage_tokens():
         daily_data = json.loads(daily_json)
         monthly_data = json.loads(monthly_json)
         daily = next(
-            (d["totalTokens"] for d in daily_data.get("daily", []) if d.get("date") == today),
+            (
+                d["totalTokens"]
+                for d in daily_data.get("daily", [])
+                if d.get("date") == today
+            ),
             0,
         )
         monthly = next(
-            (m["totalTokens"] for m in monthly_data.get("monthly", []) if m.get("month") == this_month),
+            (
+                m["totalTokens"]
+                for m in monthly_data.get("monthly", [])
+                if m.get("month") == this_month
+            ),
             0,
         )
     except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
@@ -240,7 +250,7 @@ def main():
     if dir_path == home:
         short_dir = "~"
     elif dir_path.startswith(home + "/"):
-        short_dir = "~" + dir_path[len(home):]
+        short_dir = "~" + dir_path[len(home) :]
     else:
         short_dir = dir_path
 
