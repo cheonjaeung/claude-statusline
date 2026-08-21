@@ -108,7 +108,7 @@ class StatuslineIntegrationTest(unittest.TestCase):
 
         s = statusline
         line1 = (
-            f"{s.BLUE}~/Projects/claude-statusline{s.RESET}"
+            f"{s.BLUE}~/P/claude-statusline{s.RESET}"
             f"{s.GRAY} main{s.RESET}{s.PINK}*{s.RESET}"
             f"{s.SEP}{s.CYAN}𝄞 Sonnet 5{s.RESET}{s.CYAN} high{s.RESET}{s.CYAN} thinking{s.RESET}"
             f"{s.SEP}{s.GREEN}⛁ Context: 42%{s.RESET}{s.GREEN} (200K){s.RESET}"
@@ -150,6 +150,14 @@ class StatuslineIntegrationTest(unittest.TestCase):
 
         expected_short = statusline.shorten_dir(path, 30)
         self.assertIn("...", expected_short)
+        self.assertEqual(output, f"{statusline.BLUE}{expected_short}{statusline.RESET}")
+
+    def test_short_path_gets_abbreviated_without_ellipsis(self):
+        path = f"{HOME}/very-long-directory-name/another-very-long-directory-name"
+        output = run_statusline({"workspace": {"current_dir": path}}, columns="15")
+
+        expected_short = "~/v/another-very-long-directory-name"
+        self.assertNotIn("...", expected_short)
         self.assertEqual(output, f"{statusline.BLUE}{expected_short}{statusline.RESET}")
 
     def test_ccusage_available_but_no_data_for_today(self):

@@ -87,16 +87,24 @@ def usage_color(pct):
 
 
 def shorten_dir(path, max_len):
-    """Collapse the middle of a path into '...' if it's longer than max_len,
-    keeping the first component and the last two components."""
+    """Shorten a path so it fits within max_len, keeping the last component
+    in full. If there's a middle to drop (more than 3 components), collapse
+    it into '...' first. If that's still too long, or there was no middle
+    to drop, abbreviate every other kept component to its first character."""
     if len(path) <= max_len:
         return path
     parts = path.split("/")
-    if len(parts) <= 3:
+    if len(parts) > 3:
+        first, second_last, last = parts[0], parts[-2], parts[-1]
+        candidate = f"{first}/.../{second_last}/{last}"
+        if len(candidate) <= max_len:
+            return candidate
+        return f"{first[:1]}/.../{second_last[:1]}/{last}"
+    if len(parts) <= 1:
         return path
-    first = parts[0]
-    tail = "/".join(parts[-2:])
-    return f"{first}/.../{tail}"
+    *head, last = parts
+    abbreviated_head = "/".join(part[:1] for part in head)
+    return f"{abbreviated_head}/{last}"
 
 
 def format_resets_in(resets_at):
